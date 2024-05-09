@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 09-05-2024 a las 16:53:36
+-- Tiempo de generación: 09-05-2024 a las 22:32:53
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -58,6 +58,18 @@ CREATE TABLE `inscripcion` (
   `idMateria` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
+--
+-- Volcado de datos para la tabla `inscripcion`
+--
+
+INSERT INTO `inscripcion` (`idInscripto`, `nota`, `idAlumno`, `idMateria`) VALUES
+(849, 5, 52, 655),
+(850, 3, 52, 987),
+(851, 8, 22, 987),
+(852, 5, 22, 655),
+(853, 9, 12, 962),
+(854, 3, 12, 987);
+
 -- --------------------------------------------------------
 
 --
@@ -96,8 +108,8 @@ ALTER TABLE `alumno`
 --
 ALTER TABLE `inscripcion`
   ADD PRIMARY KEY (`idInscripto`),
-  ADD UNIQUE KEY `idAlumno` (`idAlumno`),
-  ADD UNIQUE KEY `idMateria` (`idMateria`);
+  ADD KEY `idAlumno` (`idAlumno`),
+  ADD KEY `idMateria` (`idMateria`);
 
 --
 -- Indices de la tabla `materia`
@@ -119,7 +131,7 @@ ALTER TABLE `alumno`
 -- AUTO_INCREMENT de la tabla `inscripcion`
 --
 ALTER TABLE `inscripcion`
-  MODIFY `idInscripto` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `idInscripto` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=855;
 
 --
 -- AUTO_INCREMENT de la tabla `materia`
@@ -135,8 +147,8 @@ ALTER TABLE `materia`
 -- Filtros para la tabla `inscripcion`
 --
 ALTER TABLE `inscripcion`
-  ADD CONSTRAINT `inscripcion_ibfk_1` FOREIGN KEY (`idAlumno`) REFERENCES `alumno` (`idAlumno`) ON DELETE CASCADE ON UPDATE NO ACTION,
-  ADD CONSTRAINT `inscripcion_ibfk_2` FOREIGN KEY (`idMateria`) REFERENCES `materia` (`idMateria`) ON DELETE CASCADE ON UPDATE NO ACTION;
+  ADD CONSTRAINT `inscripcion_ibfk_3` FOREIGN KEY (`idAlumno`) REFERENCES `alumno` (`idAlumno`) ON DELETE NO ACTION ON UPDATE CASCADE,
+  ADD CONSTRAINT `inscripcion_ibfk_4` FOREIGN KEY (`idMateria`) REFERENCES `materia` (`idMateria`) ON DELETE CASCADE ON UPDATE NO ACTION;
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
