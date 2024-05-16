@@ -1,4 +1,3 @@
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -29,26 +28,32 @@ public class universidadEjemplo {
         desinscribirAlumno(connection, 3, 2);
     }
 
-    private static void insertAlumno(Connection connection, int id, String nombre, String apellido, String fechaNacimiento, boolean estado) {
-        String query = "INSERT INTO alumno (idAlumno, nombre, apellido fechaNacimiento, estado ) "
-                + "VALUES( 1, 'Pedro' ,'Gonzales', '2001-05-01' ,  1)";
-       
- try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, id);
-            statement.setString(2, nombre);
-            statement.setString(3, apellido);
-            statement.setString(4, fechaNacimiento);
-            statement.setBoolean(5, estado);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    // Verificar existencia antes de insertar para evitar duplicados
+private static void insertAlumno(Connection connection, int id, String nombre, String apellido, String fechaNacimiento, boolean estado) {
+    String queryCheck = "SELECT COUNT(*) FROM alumno WHERE idAlumno = ?";
+    String queryInsert = "INSERT INTO alumno (idAlumno, nombre, apellido, fechaNacimiento, estado) VALUES (?, ?, ?, ?, ?)";
+    try (PreparedStatement statementCheck = connection.prepareStatement(queryCheck)) {
+        statementCheck.setInt(1, id);
+        ResultSet rs = statementCheck.executeQuery();
+        if (rs.next() && rs.getInt(1) == 0) {
+            try (PreparedStatement statementInsert = connection.prepareStatement(queryInsert)) {
+                statementInsert.setInt(1, id);
+                statementInsert.setString(2, nombre);
+                statementInsert.setString(3, apellido);
+                statementInsert.setString(4, fechaNacimiento);
+                statementInsert.setBoolean(5, estado);
+                statementInsert.executeUpdate();
+            }
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
+
 
     private static void insertMateria(Connection connection, int id, String nombre, int año, boolean estado) {
-        String query = "INSERT INTO materia (idMateria, nombre, año, estado)"
-                + " VALUES (1, 'Matematica', 2, 1)";
- try (PreparedStatement statement = connection.prepareStatement(query)) {
+        String query = "INSERT INTO materia (idMateria, nombre, año, estado) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.setString(2, nombre);
             statement.setInt(3, año);
@@ -60,9 +65,8 @@ public class universidadEjemplo {
     }
 
     private static void inscribirAlumno(Connection connection, int idAlumno, int idMateria, int nota) {
-        String query = "INSERT INTO inscripcion (idAlumno, idMateria, nota)"
-                + " VALUES (1, 1, 10)";
- try (PreparedStatement statement = connection.prepareStatement(query)) {
+        String query = "INSERT INTO inscripcion (idAlumno, idMateria, nota) VALUES (?, ?, ?)";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idAlumno);
             statement.setInt(2, idMateria);
             statement.setInt(3, nota);
@@ -73,33 +77,32 @@ public class universidadEjemplo {
     }
 
     private static void listarAlumnosConNotasSuperioresA(Connection connection, int notaMinima) {
-    String query = "SELECT a.idAlumno, a.nombre, a.apellido, i.nota FROM alumno a " +
-                   "JOIN inscripcion i ON a.idAlumno = i.idAlumno WHERE i.nota > ?";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-        statement.setInt(1, notaMinima);
-        ResultSet resultSet = statement.executeQuery();
-        while (resultSet.next()) {
-            int idAlumno = resultSet.getInt("idAlumno");
-            String nombre = resultSet.getString("nombre");
-            String apellido = resultSet.getString("apellido");
-            int nota = resultSet.getInt("nota");
-            System.out.println("ID: " + idAlumno + ", Nombre: " + nombre + ", Apellido: " 
-                    + apellido + ", Nota: " + nota);
+        String query = "SELECT a.idAlumno, a.nombre, a.apellido, i.nota FROM alumno a " +
+                       "JOIN inscripcion i ON a.idAlumno = i.idAlumno WHERE i.nota > ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, notaMinima);
+            ResultSet resultSet = statement.executeQuery();
+            while (resultSet.next()) {
+                int idAlumno = resultSet.getInt("idAlumno");
+                String nombre = resultSet.getString("nombre");
+                String apellido = resultSet.getString("apellido");
+                int nota = resultSet.getInt("nota");
+                System.out.println("ID: " + idAlumno + ", Nombre: " + nombre + ", Apellido: " 
+                        + apellido + ", Nota: " + nota);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
-
 
     private static void desinscribirAlumno(Connection connection, int idAlumno, int idMateria) {
-    String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = ?";
-    try (PreparedStatement statement = connection.prepareStatement(query)) {
-        statement.setInt(1, idAlumno);
-        statement.setInt(2, idMateria);
-        statement.executeUpdate();
-    } catch (SQLException e) {
-        e.printStackTrace();
+        String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = ?";
+        try (PreparedStatement statement = connection.prepareStatement(query)) {
+            statement.setInt(1, idAlumno);
+            statement.setInt(2, idMateria);
+            statement.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }
-    }
