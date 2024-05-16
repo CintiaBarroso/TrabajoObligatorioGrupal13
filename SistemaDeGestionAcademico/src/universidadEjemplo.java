@@ -30,10 +30,9 @@ public class universidadEjemplo {
     }
 
     private static void insertAlumno(Connection connection, int id, String nombre, String apellido, String fechaNacimiento, boolean estado) {
-        String query = "INSERT INTO alumno (idAlumno, nombre, apellido, 
-fechaNacimiento, estado
-        ) VALUES( ?,  ?,  ?,  ?,  ?)
-        ";
+        String query = "INSERT INTO alumno (idAlumno, nombre, apellido fechaNacimiento, estado ) "
+                + "VALUES( 1, 'Pedro' ,'Gonzales', '2001-05-01' ,  1)";
+       
  try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.setString(2, nombre);
@@ -47,8 +46,8 @@ fechaNacimiento, estado
     }
 
     private static void insertMateria(Connection connection, int id, String nombre, int año, boolean estado) {
-        String query = "INSERT INTO materia (idMateria, nombre, año, estado) VALUES (?, 
-?, ?, ?)";
+        String query = "INSERT INTO materia (idMateria, nombre, año, estado)"
+                + " VALUES (1, 'Matematica', 2, 1)";
  try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, id);
             statement.setString(2, nombre);
@@ -61,8 +60,8 @@ fechaNacimiento, estado
     }
 
     private static void inscribirAlumno(Connection connection, int idAlumno, int idMateria, int nota) {
-        String query = "INSERT INTO inscripcion (idAlumno, idMateria, nota) VALUES (?, ?, 
-?)";
+        String query = "INSERT INTO inscripcion (idAlumno, idMateria, nota)"
+                + " VALUES (1, 1, 10)";
  try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idAlumno);
             statement.setInt(2, idMateria);
@@ -95,7 +94,7 @@ JOIN inscripcion i ON a.idAlumno = i.idAlumno WHERE i.nota > ?
 
     private static void desinscribirAlumno(Connection connection, int idAlumno, int idMateria) {
         String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = 
-?";
+ ?";
  try (PreparedStatement statement = connection.prepareStatement(query)) {
             statement.setInt(1, idAlumno);
             statement.setInt(2, idMateria);
