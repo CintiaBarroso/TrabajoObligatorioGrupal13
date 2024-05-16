@@ -73,24 +73,24 @@ public class universidadEjemplo {
     }
 
     private static void listarAlumnosConNotasSuperioresA(Connection connection, int notaMinima) {
-        String query = "SELECT a.idAlumno, a.nombre, a.apellido, i.nota FROM alumno a 
-JOIN inscripcion i ON a.idAlumno = i.idAlumno WHERE i.nota > ?
-        ";
- try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, notaMinima);
-            ResultSet resultSet = statement.executeQuery();
-            while (resultSet.next()) {
-                int idAlumno = resultSet.getInt("idAlumno");
-                String nombre = resultSet.getString("nombre");
-                String apellido = resultSet.getString("apellido");
-                int nota = resultSet.getInt("nota");
-                System.out.println("ID: " + idAlumno + ", Nombre: " + nombre + ", Apellido: "
-                        + apellido + ", Nota: " + nota);
-            }
-        } catch (SQLException e) {
-            e.printStackTrace();
+    String query = "SELECT a.idAlumno, a.nombre, a.apellido, i.nota FROM alumno a " +
+                   "JOIN inscripcion i ON a.idAlumno = i.idAlumno WHERE i.nota > ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+        statement.setInt(1, notaMinima);
+        ResultSet resultSet = statement.executeQuery();
+        while (resultSet.next()) {
+            int idAlumno = resultSet.getInt("idAlumno");
+            String nombre = resultSet.getString("nombre");
+            String apellido = resultSet.getString("apellido");
+            int nota = resultSet.getInt("nota");
+            System.out.println("ID: " + idAlumno + ", Nombre: " + nombre + ", Apellido: " 
+                    + apellido + ", Nota: " + nota);
         }
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
+}
+
 
     private static void desinscribirAlumno(Connection connection, int idAlumno, int idMateria) {
         String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = 
