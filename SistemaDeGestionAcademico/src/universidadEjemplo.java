@@ -93,14 +93,13 @@ public class universidadEjemplo {
 
 
     private static void desinscribirAlumno(Connection connection, int idAlumno, int idMateria) {
-        String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = 
- ?";
- try (PreparedStatement statement = connection.prepareStatement(query)) {
-            statement.setInt(1, idAlumno);
-            statement.setInt(2, idMateria);
-            statement.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+    String query = "DELETE FROM inscripcion WHERE idAlumno = ? AND idMateria = ?";
+    try (PreparedStatement statement = connection.prepareStatement(query)) {
+        statement.setInt(1, idAlumno);
+        statement.setInt(2, idMateria);
+        statement.executeUpdate();
+    } catch (SQLException e) {
+        e.printStackTrace();
     }
 }
+    }
