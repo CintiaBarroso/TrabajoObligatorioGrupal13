@@ -8,10 +8,12 @@ public class universidadEjemplo {
 
     public static void main(String[] args) {
         Connection connection = Conexion.getConnection();
+        // Limpiar tablas
+        limpiarTablas(connection);
         // Insertar 3 alumnos
-        insertAlumno(connection, 1, "Juan", "Pérez", "2000-01-01", true);
-        insertAlumno(connection, 2, "María", "Gómez", "2001-02-02", true);
-        insertAlumno(connection, 3, "Carlos", "López", "2002-03-03", true);
+        insertAlumno(connection, 1, 12345678, "Juan", "Pérez", "2000-01-01", true);
+        insertAlumno(connection, 2, 23456789, "María", "Gómez", "2001-02-02", true);
+        insertAlumno(connection, 3, 34567890, "Carlos", "López", "2002-03-03", true);
         // Insertar 2 materias
         insertMateria(connection, 1, "Matemáticas", 2023, true);
         insertMateria(connection, 2, "Historia", 2023, true);
@@ -28,28 +30,43 @@ public class universidadEjemplo {
         desinscribirAlumno(connection, 3, 2);
     }
 
-    // Verificar existencia antes de insertar para evitar duplicados
-private static void insertAlumno(Connection connection, int id, String nombre, String apellido, String fechaNacimiento, boolean estado) {
-    String queryCheck = "SELECT COUNT(*) FROM alumno WHERE idAlumno = ?";
-    String queryInsert = "INSERT INTO alumno (idAlumno, nombre, apellido, fechaNacimiento, estado) VALUES (?, ?, ?, ?, ?)";
-    try (PreparedStatement statementCheck = connection.prepareStatement(queryCheck)) {
-        statementCheck.setInt(1, id);
-        ResultSet rs = statementCheck.executeQuery();
-        if (rs.next() && rs.getInt(1) == 0) {
-            try (PreparedStatement statementInsert = connection.prepareStatement(queryInsert)) {
-                statementInsert.setInt(1, id);
-                statementInsert.setString(2, nombre);
-                statementInsert.setString(3, apellido);
-                statementInsert.setString(4, fechaNacimiento);
-                statementInsert.setBoolean(5, estado);
-                statementInsert.executeUpdate();
+    private static void limpiarTablas(Connection connection) {
+        String[] queries = {
+            "DELETE FROM inscripcion",
+            "DELETE FROM materia",
+            "DELETE FROM alumno"
+        };
+        for (String query : queries) {
+            try (PreparedStatement statement = connection.prepareStatement(query)) {
+                statement.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
-    } catch (SQLException e) {
-        e.printStackTrace();
     }
-}
 
+    private static void insertAlumno(Connection connection, int id, int dni, String nombre, String apellido, String fechaNacimiento, boolean estado) {
+        String queryCheck = "SELECT COUNT(*) FROM alumno WHERE idAlumno = ?";
+        String queryInsert = "INSERT INTO alumno (idAlumno, dni, nombre, apellido, fechaNacimiento, estado) VALUES (?, ?, ?, ?, ?, ?)";
+        try (PreparedStatement statementCheck = connection.prepareStatement(queryCheck)) {
+            statementCheck.setInt(1, id);
+            ResultSet rs = statementCheck.executeQuery();
+            if (rs.next() && rs.getInt(1) == 0) {
+                try (PreparedStatement statementInsert = connection.prepareStatement(queryInsert)) {
+                    statementInsert.setInt(1, id);
+                    statementInsert.setInt(2, dni);
+                    statementInsert.setString(3, nombre);
+                    statementInsert.setString(4, apellido);
+                    statementInsert.setString(5, fechaNacimiento);
+                    statementInsert.setBoolean(6, estado);
+                    statementInsert.executeUpdate();
+                }
+            }
+        } catch (SQLException e) {
+            System.err.println("Error al insertar alumno: " + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     private static void insertMateria(Connection connection, int id, String nombre, int año, boolean estado) {
         String query = "INSERT INTO materia (idMateria, nombre, año, estado) VALUES (?, ?, ?, ?)";
@@ -60,6 +77,7 @@ private static void insertAlumno(Connection connection, int id, String nombre, S
             statement.setBoolean(4, estado);
             statement.executeUpdate();
         } catch (SQLException e) {
+            System.err.println("Error al insertar materia: " + e.getMessage());
             e.printStackTrace();
         }
     }
@@ -72,6 +90,7 @@ private static void insertAlumno(Connection connection, int id, String nombre, S
             statement.setInt(3, nota);
             statement.executeUpdate();
         } catch (SQLException e) {
+            System.err.println("Error al inscribir alumno: " + e.getMessage());
             e.printStackTrace();
         }
     }
